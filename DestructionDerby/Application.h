@@ -10,8 +10,10 @@
 #include "ModuleSceneIntro.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
+#include "ModuleCamera3D2.h"
 #include "ModulePhysics3D.h"
 #include "ModulePlayer.h"
+#include "ModulePlayer2.h"
 
 class Application
 {
@@ -22,8 +24,10 @@ public:
 	ModuleSceneIntro* scene_intro;
 	ModuleRenderer3D* renderer3D;
 	ModuleCamera3D* camera;
+	ModuleCamera3D2* camera2;
 	ModulePhysics3D* physics;
 	ModulePlayer* player;
+	ModulePlayer2* player2;
 
 private:
 

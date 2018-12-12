@@ -3,11 +3,11 @@
 #include "Globals.h"
 #include "glmath.h"
 
-class ModuleCamera3D : public Module
+class ModuleCamera3D2 : public Module
 {
 public:
-	ModuleCamera3D(Application* app, bool start_enabled = true);
-	~ModuleCamera3D();
+	ModuleCamera3D2(Application* app, bool start_enabled = true);
+	~ModuleCamera3D2();
 
 	bool Start();
 	update_status Update(float dt);
@@ -23,7 +23,7 @@ private:
 	void CalculateViewMatrix();
 
 public:
-	
+
 	bool free_camera = false;
 	vec3 X, Y, Z, Position, Reference;
 
