@@ -18,6 +18,11 @@ public:
 	bool Start();
 	update_status Update(float dt);
 	bool CleanUp();
+	void InitialPos() const;
+	void RespawnCar();
+	void Lost();
+	void  Win();
+	void Draw(float dt);
 
 public:
 
@@ -25,4 +30,11 @@ public:
 	float turn;
 	float acceleration;
 	float brake;
+	uint  lifes = 3;
+	uint  wins = 0;
+	bool  lost = false;
+
+	p2DynArray<PhysBody3D*> bullets;
+	p2DynArray<Sphere> spheres;
+
 };

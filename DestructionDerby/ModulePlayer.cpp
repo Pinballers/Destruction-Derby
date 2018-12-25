@@ -97,7 +97,12 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 12, 10);
+	vehicle->type = physType::PLAYER1;
+	vehicle->collision_listeners.add(App->scene_intro);
+	
+	InitialPos();
+
+
 	
 	return true;
 }
@@ -107,12 +112,17 @@ bool ModulePlayer::CleanUp()
 {
 	LOG("Unloading player");
 
+	bullets.Clear();
+	spheres.Clear();
+
 	return true;
 }
 
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	
+
 	turn = acceleration = brake = 0.0f;
 
 	if(App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
@@ -134,20 +144,106 @@ update_status ModulePlayer::Update(float dt)
 
 	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
 	{
+		acceleration = -MAX_ACCELERATION;
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+	{
 		brake = BRAKE_POWER;
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	{
+		RespawnCar();
+		
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_DOWN)
+	{
+		Sphere s;
+		s.radius = 1;
+		s.SetPos(vehicle->vehicle->getChassisWorldTransform().getOrigin().getX() + 5 * vehicle->vehicle->getForwardVector().getX(),
+				1,
+			vehicle->vehicle->getChassisWorldTransform().getOrigin().getZ() + 5 * vehicle->vehicle->getForwardVector().getZ());
+
+		s.color.r = 255;
+		
+		float force = 50.0f;
+		PhysBody3D* p = App->physics->AddBody(s);
+		p->Push(-(App->camera->Z.x * force), -(App->camera->Z.y * force), -(App->camera->Z.z * force));
+		p->type = physType::BULLET;
+		bullets.PushBack(p);
+		spheres.PushBack(s);
+		
 	}
 
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);
 	vehicle->Brake(brake);
 
-	vehicle->Render();
-
-	char title[80];
-	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
-	App->window->SetTitle(title);
+	if (restart)
+		Restart();
 
 	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::Draw(float dt) {
+	for (int i = 0; i < bullets.Count(); i++)
+	{
+		bullets[i]->GetTransform(&spheres[i].transform);
+		spheres[i].Render();
+	}
+	if (lost)
+		Lost();
+
+	vehicle->Render();
+}
+
+void ModulePlayer::InitialPos() const {
+
+	vehicle->SetRotation({ 0,1,0,1 });
+	vehicle->SetPos(-150, 5, 0);
+}
+
+void ModulePlayer::RespawnCar() {
+	if (lifes <= 0) {
+		lost = true;
+	}
+	else {
+		InitialPos();
+		vehicle->vehicle->getRigidBody()->setAngularVelocity({ 0, 0, 0 });
+		vehicle->vehicle->getRigidBody()->setLinearVelocity({ 0, 0, 0 });
+		lifes--;
+		App->player2->InitialPos();
+	}
+
+	restart = true;
+	//Restart();
+}
+
+void ModulePlayer::Restart() {
+	
+	App->player2->CleanUp();
+	App->player->CleanUp();
+	App->scene_intro->CleanUp();
+	App->physics->CleanUp();
+	App->physics->Start();
+	App->scene_intro->Start();
+	App->player->Start();
+	App->player2->Start();
+	restart = false;
+}
+
+void ModulePlayer::Lost() {
+	App->player2->Win();
+	lost = false;
+	lifes = 3;
+}
+
+void ModulePlayer::Win() {
+	wins++;
+	RespawnCar();
+	lifes = 3;
 }
 
 

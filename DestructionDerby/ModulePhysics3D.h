@@ -27,6 +27,8 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
+	void Draw(float dt);
+
 	PhysBody3D* AddBody(const Sphere& sphere, float mass = 1.0f);
 	PhysBody3D* AddBody(const Cube& cube, float mass = 1.0f);
 	PhysBody3D* AddBody(const Cylinder& cylinder, float mass = 1.0f);

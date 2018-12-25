@@ -112,46 +112,29 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
 	
-	if (player1) {
-
-		glViewport(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-		glLoadMatrixf(App->camera->GetViewMatrix());
+	glEnable(GL_SCISSOR_TEST);
 		
-		lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-
-		for (uint i = 0; i < MAX_LIGHTS; ++i)
-			lights[i].Render();
-
-	}
-	else {
-
-		glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-		glLoadMatrixf(App->camera2->GetViewMatrix());
-
-		lights[0].SetPos(App->camera2->Position.x, App->camera2->Position.y, App->camera2->Position.z);
-
-		for (uint i = 0; i < MAX_LIGHTS; ++i)
-			lights[i].Render();
-
-	}
-
-	/*glViewport(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+	glScissor(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+	glViewport(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
 	glLoadMatrixf(App->camera->GetViewMatrix());
-
+	Draw(dt);
+	
 	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
 
 	for (uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();
 
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-	glLoadMatrixf(App->camera2->GetViewMatrix());
 
+	glScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+	glViewport(0,0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+	glLoadMatrixf(App->camera2->GetViewMatrix());
+	Draw(dt);
 	lights[0].SetPos(App->camera2->Position.x, App->camera2->Position.y, App->camera2->Position.z);
 
 	for (uint i = 0; i < MAX_LIGHTS; ++i)
-		lights[i].Render();*/
-
-	player1 = !player1;
+		lights[i].Render();
+	
+	glDisable(GL_SCISSOR_TEST);
 	
 	return UPDATE_CONTINUE;
 }
@@ -186,4 +169,11 @@ void ModuleRenderer3D::OnResize(int width, int height)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+}
+
+void ModuleRenderer3D::Draw(float dt) {
+	App->physics->Draw(dt);
+	App->player->Draw(dt);
+	App->player2->Draw(dt);
+	App->scene_intro->Draw(dt);
 }
