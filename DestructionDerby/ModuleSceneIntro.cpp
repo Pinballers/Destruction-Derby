@@ -18,6 +18,8 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 
 	SceneMap();
+	App->audio->PlayMusic("assets/audio/nightcoreEndofMe.ogg");
+
 
 	return ret;
 }
@@ -29,6 +31,8 @@ bool ModuleSceneIntro::CleanUp()
 
 	phys_cubes.Clear();
 	cubes.Clear();
+
+	App->audio->CleanUp();
 
 	return true;
 }
