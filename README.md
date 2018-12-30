@@ -1,5 +1,10 @@
 # Destruction-Derby
 
+This game is a project for the university, it is a tribut to the mythical car battle game Destruction Derby.
+
+The player must chase, aim and shoot his opponent snatching their lives to achieve victory.
+
+
 ## Controls
 
 ### Keyboard:
